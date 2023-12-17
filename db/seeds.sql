@@ -22,6 +22,6 @@ VALUES  (01, "Sabrina", "Salvati", "Actor/Talent", 02),
         (06, "Aeryn", "Daboin", "Assistant Producer", 02),
         (07, "Marta", "Mack", "Actor/Talent", 02),
         (08, "Mike", "Mansen", "Producer", 02),
-        (09, "Sarah","Johnson", "Writer", 01),
+        (09, "Sarah","Johnson", "Writer", 01);
      
 
