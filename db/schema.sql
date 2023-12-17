@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS film_db;
-CREATE DATABASE film_db;
+DROP DATABASE IF EXISTS college_db;
+CREATE DATABASE college_db;
 
-USE film_db;
+USE college_db;
 
 CREATE TABLE department (
     id INT NOT NULL AUTO_INCREMENT,
