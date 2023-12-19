@@ -26,6 +26,10 @@ async function menu(){
                     case 'insert data':
                         return captureInput();
                 }
+                switch(answers.option){
+                    case 'View All Departments':
+                        return pullFromDepartment();
+                }
 }
 
 //exit function
@@ -35,6 +39,19 @@ async function captureInput(){
     console.log("finish capture input")
     return;
 };
+
+async function pullFromDepartment (){
+    //looking at the schema file
+//    console.log(results);
+    // const [data, metaData] = await db.query("SELECT * FROM role");
+    // const [data, metaData] = await db.query("SELECT * FROM employee");
+  try{
+    const results = await db.query('SELECT * FROM department');
+    console.log(results);
+  } catch (error){
+    console.error('Error executing SQL query:', error.message);
+  }
+}
 
 //function to do the sql insert
 //use prepared statement
@@ -50,8 +67,10 @@ async function init(){
     db = await startConnection();
 
     const results = await db.query('SELECT * FROM department');
+    
 
     console.log(results[0]);
     await menu();
+    await pullFromDepartment();
 };
 init();

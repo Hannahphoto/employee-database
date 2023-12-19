@@ -1,14 +1,16 @@
 require('dotenv').config();
+//  const db = require('college_db');
 
 const mysql = require('mysql2/promise');
 
 //read .env and look for the vars:
-//DB_HOST=
-//DB_USER=
-//DB_PASSWORD=
-//DB_DATABASE=
-// console.log(process.env);
-
+// const readEnv = asyn () => {
+// DB_HOST=
+// DB_USER=
+// DB_PASSWORD=
+// DB_DATABASE=
+// console.log(process.env.DB_DATABASE);
+// }
 //start connection
 const startConnection = async () => {
     //return a db variable that we can use
