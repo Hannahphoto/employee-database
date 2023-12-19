@@ -1,4 +1,6 @@
 const inquirer = require('inquirer');
+const { table } = require('table');
+const mysql = require('mysql2/promise');
 
 //db connection file using dotenv
 const startConnection = require('./db/connection');
@@ -64,12 +66,32 @@ async function pullFromDepartment (){
 //start/init functiion. Where the program begins.
 
 async function init(){
-    db = await startConnection();
+    db = await startConnection(
+        {
+            user: 'root',
+            password: 'rootroot',
+            database: 'college_db'
+        }
+    );
+    console.log(`Connected to the college_db database.`);
+    console.log(db);
 
     const results = await db.query('SELECT * FROM department');
-    
-
     console.log(results[0]);
+
+    //get data from results
+    const data = results;
+    console.log(data);
+
+    //table module
+    const data = [
+        ['id', 'department name', '0C'],
+        ['1A', '1B', '1C'],
+        ['2A', '2B', '2C']
+    ];
+    
+    console.log(table(data));
+
     await menu();
     await pullFromDepartment();
 };
