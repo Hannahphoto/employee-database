@@ -27,12 +27,14 @@ async function menu(){
                 switch(answers.options){
                     case 'insert data':
                         return captureInput();
-                }
-                switch(answers.options){
                     case 'View All Departments':
                         return pullFromDepartment();
+                    case 'View all Roles':
+                        return pullFromRoles();
+                    case 'View all Employee':
+                         return pullFromEmployees();
                 }
-}
+};
 
 //exit function
 
@@ -57,8 +59,48 @@ async function pullFromDepartment (){
     console.log(table(deptArr));
   } catch (error){
     console.error('Error executing SQL query:', error.message);
-  }
-}
+  };
+
+// menu();
+};
+
+async function pullFromRoles (){
+    try{
+        const resultsRoles = await db.query('SELECT * FROM role');
+        //get data from results
+        console.log(resultsRoles[0]);
+        //table module 
+        // //table columns names
+        const rolesArr = resultsRoles[0].map(row => Object.values(row));
+        //add column names 
+        rolesArr.unshift(["id", " role_title", "role_salary", "department_id"]);
+        //print table
+        console.log(table(rolesArr));
+      } catch (error){
+        console.error('Error executing SQL query:', error.message);
+      }
+
+// menu();
+};
+
+async function pullFromEmployees(){
+    try{
+        const resultsEmployees = await db.query('SELECT * FROM employee');
+        //get data from results
+        console.log(resultsEmployees[0]);
+        //table module 
+        // //table columns names
+        const employeeArr = resultsEmployees[0].map(row => Object.values(row));
+        //add column names 
+        employeeArr.unshift(["id", "first_name", "last_name", "role_id", "role_title"]);
+        //print table
+        console.log(table(employeeArr));
+      } catch (error){
+        console.error('Error executing SQL query:', error.message);
+      }
+
+// menu();
+};
 
 //function to do the sql insert
 //use prepared statement
@@ -83,5 +125,6 @@ async function init(){
 
     await menu();
     await pullFromDepartment();
+    // await pullFromEmployees();
 };
 init();
