@@ -125,6 +125,8 @@ async function init(){
 
     await menu();
     await pullFromDepartment();
-    // await pullFromEmployees();
-};
+    // await pullFromRoles();
+    await pullFromEmployees();
+    
+}
 init();
