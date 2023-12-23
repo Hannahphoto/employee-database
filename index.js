@@ -24,11 +24,11 @@ async function menu(){
                     'Update an Employee Role',
                 ]}]);
 
-                switch(answers.option){
+                switch(answers.options){
                     case 'insert data':
                         return captureInput();
                 }
-                switch(answers.option){
+                switch(answers.options){
                     case 'View All Departments':
                         return pullFromDepartment();
                 }
@@ -44,12 +44,17 @@ async function captureInput(){
 
 async function pullFromDepartment (){
     //looking at the schema file
-//    console.log(results);
-    // const [data, metaData] = await db.query("SELECT * FROM role");
-    // const [data, metaData] = await db.query("SELECT * FROM employee");
   try{
-    const results = await db.query('SELECT * FROM department');
-    console.log(results);
+    const resultsDept = await db.query('SELECT * FROM department');
+    //get data from results
+    console.log(resultsDept[0]);
+    //table module 
+    // //table columns names
+    const deptArr = resultsDept[0].map(row => Object.values(row));
+    //add column names 
+    deptArr.unshift(["id", "department_name"]);
+    //print table
+    console.log(table(deptArr));
   } catch (error){
     console.error('Error executing SQL query:', error.message);
   }
@@ -64,7 +69,6 @@ async function pullFromDepartment (){
 
 
 //start/init functiion. Where the program begins.
-
 async function init(){
     db = await startConnection(
         {
@@ -74,23 +78,8 @@ async function init(){
         }
     );
     console.log(`Connected to the college_db database.`);
-    console.log(db);
+    // console.log(db);
 
-    const results = await db.query('SELECT * FROM department');
-    console.log(results[0]);
-
-    //get data from results
-    const data = results;
-    console.log(data);
-
-    //table module
-    const data = [
-        ['id', 'department name', '0C'],
-        ['1A', '1B', '1C'],
-        ['2A', '2B', '2C']
-    ];
-    
-    console.log(table(data));
 
     await menu();
     await pullFromDepartment();
