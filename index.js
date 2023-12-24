@@ -7,6 +7,7 @@ const startConnection = require('./db/connection');
 
 let db = null;
 
+
 async function menu(){
     const answers = await inquirer.prompt(
         [
@@ -25,14 +26,20 @@ async function menu(){
                 ]}]);
 
                 switch(answers.options){
-                    case 'insert data':
-                        return captureInput();
                     case 'View All Departments':
                         return pullFromDepartment();
                     case 'View all Roles':
                         return pullFromRoles();
-                    case 'View all Employee':
+                    case 'View all Employees':
                          return pullFromEmployees();
+                    case 'insert data':
+                        return captureInput();
+                    case 'Add a department':
+                        return insertDepartment();
+                    case 'Add a role':
+                        return insertRole();
+                    case 'Add an Employee':
+                        return insertEmployee();
                 }
 };
 
@@ -40,7 +47,8 @@ async function menu(){
 
 //capture input data
 async function captureInput(){
-    console.log("finish capture input")
+    console.log("finish capture input");
+
     return;
 };
 
@@ -108,6 +116,26 @@ async function pullFromEmployees(){
     //must match database column and values
 //}
 //const idata = await db.query("INSERT INTO employee?", objInput )
+async function insertDepartment(inputs){
+    console.log(inputs);
+    //use prepared statement
+    const ddata = await db.query("INSERT INTO department SET ?", inputs);
+    console.log(ddata);
+    console.log("Insert Successful");
+
+}
+
+async function insertRole(inputs){
+    console.log(inputs);
+    //use prepared statement
+
+}
+
+async function insertEmployee(inputs){
+    console.log(inputs);
+    //use prepared statement
+
+}
 
 
 //start/init functiion. Where the program begins.
