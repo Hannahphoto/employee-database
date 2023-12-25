@@ -35,11 +35,11 @@ async function menu(){
                     case 'insert data':
                         return captureInput();
                     case 'Add a department':
-                        return insertDepartment();
-                    case 'Add a role':
-                        return insertRole();
-                    case 'Add an Employee':
-                        return insertEmployee();
+                    //     return insertDepartment();
+                    // case 'Add a role':
+                    //     return insertRole();
+                    // case 'Add an Employee':
+                    //     return insertEmployee();
                 }
 };
 
@@ -75,7 +75,7 @@ async function pullFromRoles (){
         // //table columns names
         const rolesArr = resultsRoles[0].map(row => Object.values(row));
         //add column names 
-        rolesArr.unshift(["id", " role_title", "role_salary", "department_id"]);
+        rolesArr.unshift(["id","role_title", "role_salary", "department_id"]);
         //print table
         console.log(table(rolesArr));
       } catch (error){
@@ -94,7 +94,7 @@ async function pullFromEmployees(){
         // //table columns names
         const employeeArr = resultsEmployees[0].map(row => Object.values(row));
         //add column names 
-        employeeArr.unshift(["id", "first_name", "last_name", "role_id", "role_title"]);
+        employeeArr.unshift(["id", "first_name", "last_name", "role_id", "role_title", "department_id"]);
         //print table
         console.log(table(employeeArr));
       } catch (error){
