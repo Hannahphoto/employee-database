@@ -45,12 +45,6 @@ async function menu(){
 
 //exit function
 
-//capture input data
-async function captureInput(){
-    console.log("finish capture input");
-
-    return;
-};
 
 async function pullFromDepartment (){
     //looking at the schema file
@@ -110,6 +104,32 @@ async function pullFromEmployees(){
 // menu();
 };
 
+//capture input data
+async function captureInput(){
+    console.log("finish capture input");
+    const answers = await inquirer.prompt([{
+        type: "input",
+        name: "department_name",
+        message: "what department do you want to add?"
+    },
+    {
+        type:"input",
+        name:"role_title",
+        message: "What role do you want to add?" 
+    },
+    {
+        type:"input",
+        name:"first_name",
+        message: "What new employee do you want to add?"
+    }
+]);
+    console.log(answers)
+
+    await insertDepartment(answers);
+    await insertRole(answers);
+    await insertEmployee(answers);
+};
+
 //function to do the sql insert
 //use prepared statement
 //const objInput = {
@@ -119,23 +139,23 @@ async function pullFromEmployees(){
 async function insertDepartment(inputs){
     console.log(inputs);
     //use prepared statement
-    const ddata = await db.query("INSERT INTO department SET ?", inputs);
+    const ddata = await db.query("INSERT INTO department SET ?", [inputs]);
     console.log(ddata);
     console.log("Insert Successful");
 
-}
+};
 
 async function insertRole(inputs){
     console.log(inputs);
     //use prepared statement
 
-}
+};
 
 async function insertEmployee(inputs){
     console.log(inputs);
     //use prepared statement
 
-}
+};
 
 
 //start/init functiion. Where the program begins.
@@ -156,5 +176,6 @@ async function init(){
     // await pullFromRoles();
     await pullFromEmployees();
     
-}
+};
+
 init();

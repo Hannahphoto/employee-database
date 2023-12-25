@@ -1,6 +1,5 @@
 require('dotenv').config();
 //  const db = require('college_db');
-
 const mysql = require('mysql2/promise');
 
 //read .env and look for the vars:
