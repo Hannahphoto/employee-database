@@ -26,20 +26,18 @@ async function menu(){
                 ]}]);
 
                 switch(answers.options){
+                    case 'Add a department':
+                        return captureInput();
+                    case 'Add a role':
+                        return insertRole();
+                    case 'Add an Employee':
+                        return insertEmployee();
                     case 'View All Departments':
                         return pullFromDepartment();
                     case 'View all Roles':
                         return pullFromRoles();
                     case 'View all Employees':
                          return pullFromEmployees();
-                    case 'insert data':
-                        return captureInput();
-                    case 'Add a department':
-                    //     return insertDepartment();
-                    // case 'Add a role':
-                    //     return insertRole();
-                    // case 'Add an Employee':
-                    //     return insertEmployee();
                 }
 };
 
@@ -130,28 +128,24 @@ async function captureInput(){
     await insertEmployee(answers);
 };
 
-//function to do the sql insert
-//use prepared statement
-//const objInput = {
-    //must match database column and values
-//}
+
 //const idata = await db.query("INSERT INTO employee?", objInput )
-async function insertDepartment(inputs){
-    console.log(inputs);
+async function insertDepartment(input){
+    console.log(input);
     //use prepared statement
-    const ddata = await db.query("INSERT INTO department SET ?", [inputs]);
-    console.log(ddata);
+    const idata = await db.query("INSERT INTO department SET ?", [input]);
+    console.log(idata);
     console.log("Insert Successful");
 
 };
 
-async function insertRole(inputs){
+async function insertRole(input){
     console.log(inputs);
     //use prepared statement
 
 };
 
-async function insertEmployee(inputs){
+async function insertEmployee(input){
     console.log(inputs);
     //use prepared statement
 
