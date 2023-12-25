@@ -22,16 +22,15 @@ async function menu(){
                     'Add a department',
                     'Add a role',
                     'Add an Employee',
-                    'Update an Employee Role',
                 ]}]);
 
                 switch(answers.options){
                     case 'Add a department':
-                        return captureInput();
+                        return captureDept();
                     case 'Add a role':
-                        return insertRole();
+                        return captureRole();
                     case 'Add an Employee':
-                        return insertEmployee();
+                        return captureEmployee();
                     case 'View All Departments':
                         return pullFromDepartment();
                     case 'View all Roles':
@@ -103,29 +102,69 @@ async function pullFromEmployees(){
 };
 
 //capture input data
-async function captureInput(){
+async function captureDept(){
     console.log("finish capture input");
     const answers = await inquirer.prompt([{
         type: "input",
         name: "department_name",
         message: "what department do you want to add?"
     },
-    {
+]);
+    console.log(answers)
+    await insertDepartment(answers);
+};
+
+async function captureRole(){
+    const answers = await inquirer.prompt([{
         type:"input",
         name:"role_title",
         message: "What role do you want to add?" 
+    }]);
+    await insertRole(answers);
+};
+
+async function captureEmployee(){
+    const answers = await inquirer.prompt([{
+        type:"input",
+        name:"first_name",
+        message: "What is the first name of the new employee you want to add?"
+    
     },
     {
         type:"input",
-        name:"first_name",
-        message: "What new employee do you want to add?"
-    }
-]);
-    console.log(answers)
-
-    await insertDepartment(answers);
-    await insertRole(answers);
-    await insertEmployee(answers);
+        name:"last_name",
+        message: "What is the last name of the new employee you want to add?"
+    },
+    {
+        type:"list",
+        name: "options",
+        message: "what role will this employee have?",
+        choices: [
+            'Producer',
+            'Writer',
+            'Editor',
+            'Promoter',
+            'Assistant Producer',
+            'Ator/Talent',
+            'Update an Employee Role',
+                 ]  
+    }]);
+    switch(answers.input){
+        case 'first_name':
+            return insertEmployee(input);
+        case 'last_name':
+            return insertEmployee(input);}
+    switch(answers.options){
+        case 'producer':
+        case 'Writer':
+        case 'Editor':
+        case 'Promoter':
+        case 'Assistant Producer':
+        case 'Actor/Talen':
+            return updateRoles(answers);
+        case 'Update an Employee':
+            return captureRole(answers);
+    };
 };
 
 
@@ -136,19 +175,38 @@ async function insertDepartment(input){
     const idata = await db.query("INSERT INTO department SET ?", [input]);
     console.log(idata);
     console.log("Insert Successful");
-
 };
 
 async function insertRole(input){
-    console.log(inputs);
+    console.log(input);
     //use prepared statement
-
+    const idata = await db.query("INSERT INTO role SET ?", [input]);
+    console.log(idata);
+    console.log("Insert Successful");
 };
 
-async function insertEmployee(input){
-    console.log(inputs);
+async function insertEmployee(answers){
+    console.log(input);
     //use prepared statement
+    const idata = await db.query("INSERT INTO employee SET ?", [input]);
+    console.log(idata);
+    console.log("Insert Successful");
+};
 
+async function updateRoles(answers){
+    console.log(answers);
+    const {first_name, last_name, options} = answers;
+
+    const roleID = await getRoleId(options);
+
+    const idata = await db.query("UPDATE role SET `first_name` = ?, `last_name`=? WHERE `id`=?" [answers])
+    console.log(idata);
+    console.log('Update Successful');
+};
+
+async function getRoleId(roleTitle){
+    const result = await db.query("SELECT id FROM role WHERE role_title = ?", [roleTitle]);
+    return result[0][0].id;
 };
 
 
