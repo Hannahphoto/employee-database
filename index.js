@@ -86,7 +86,7 @@ async function pullFromRoles (){
 };
 
 async function pullFromEmployees(){
-    updateEmployee();
+    // updateEmployee();
     try{
         const resultsEmployees = await db.query('SELECT * FROM employee');
         //get data from results
@@ -160,11 +160,6 @@ async function captureEmployee(){
             'Update an Employee Role',
                  ]  
     },
-    {
-        type:"input",
-        name:"role_salary",
-        message:"What is the salary of the role you just added?"
-    },
 ]);
     switch(answers){
         case 'first_name':
@@ -182,12 +177,9 @@ async function captureEmployee(){
         case 'Update an Employee Role':
             return captureRole(answers);
     };
-    switch(answers.options){
-        case 'role_salary':
-            return insertRole(answers)
-    };
-    await insertEmployee(answers);
-    await updateRoles(answers);
+    // await insertEmployee(answers);
+    // await updateRoles(answers);
+    await updateEmployee(answers);
 };
 
 
@@ -206,24 +198,26 @@ async function insertRole(input){
     const idata = await db.query("INSERT INTO role SET ?", [input]);
     console.log(idata);
     console.log("Insert Successful");
+    updateRoles();
 };
 
 async function insertEmployee(answers){
     console.log(answers);
     //use prepared statement
-    const idata = await db.query("INSERT INTO employee SET `first_name` = ?, `last_name` = ?, `options` = ?,`role_salary` = ?", answers.first_name, answers.last_name, answers.options, answers.role_salary);
+    const idata = await db.query("INSERT INTO employee SET `first_name` = ?, `last_name` = ?, `options` = ?,`role_title` =?", answers.first_name, answers.last_name, answers.options, answers.role_salary);
     console.log(idata);
     console.log("Insert Successful");
     updateEmployee();
+    updateRoles();
 };
 
-async function updateRoles(answers){
-    console.log(answers);
-    const {first_name, last_name, options} = answers;
+async function updateRoles(input){
+    console.log(input);
+    const {first_name, last_name, options} = input;
 
     const roleID = await getRoleId(options);
 
-    const idata = await db.query("UPDATE role SET `role_title` = ?, `role_salary`=? WHERE `id`=?", [first_name, last_name, roleID]);
+    const idata = await db.query("UPDATE role SET `role_title` = ?, `role_salary` = ?, `department_id`=?", [input, roleID]);
     console.log(idata);
     console.log('Update Successful');
 };
@@ -233,18 +227,21 @@ async function getRoleId(roleTitle){
     return result[0][0].id;
 };
 
-async function updateEmployee(answers){
-    console.log(answers);
-    const {first_name, last_name, options} = answers;
+
+async function updateEmployee(input){
+    console.log(input);
+    const {first_name, last_name, options} = input;
     const empID = await getEmpId(options);
-    const idata = await db.query("UPDATE employee SET `first_name` = ?, `last_name`=? WHERE `id`=?", [first_name, last_name, empID]);
+    const idata = await db.query("UPDATE employee SET `first_name` = ?, `last_name`=?", [first_name,last_name, empID]);
     console.log(idata);
     console.log('Employee Update sucessful!');
+    // updateRoles();
 };
 
-async function getEmpId(options){
-    
-}
+async function getEmpId(roleTitle){
+    const resultEmp = await db.query("SELECT id FROM employee WHERE role_title =?", [roleTitle]);
+    return resultEmp[0][0].id;
+};
 
 //start/init functiion. Where the program begins.
 async function init(){
