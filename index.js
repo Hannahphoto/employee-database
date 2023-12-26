@@ -135,12 +135,10 @@ async function captureRole(){
         type: "input",
         name: "department_name",
         message: "Which department does this role belong to?",
-    }
-
+    },
 ]);
     await insertRole(input);
-    await getDepID(input)
-    await updateDepartment();
+    await updateDepartment(input);
 };
 
 async function captureEmployee(){
@@ -209,7 +207,7 @@ async function insertRole(input){
     // updateRoles();
     console.log(input);
     //use prepared statement
-    const idata = await db.query("INSERT INTO role SET, `role_title` = ?, `department_id` = ?, `role_salary`=?", [input.role_title, input.role_salary, department_id]);
+    const idata = await db.query("INSERT INTO role SET, `role_title` = ?, `role_salary`=?", [input.role_title, input.role_salary]);
     console.log(idata);
     console.log("Role Insert Successful");
     updateRoles();
