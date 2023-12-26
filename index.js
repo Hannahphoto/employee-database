@@ -22,6 +22,7 @@ async function menu(){
                     'Add a department',
                     'Add a role',
                     'Add an Employee',
+                    'Update an Employee Role'
                 ]}]);
 
                 switch(answers.options){
@@ -37,6 +38,8 @@ async function menu(){
                         return pullFromRoles();
                     case 'View all Employees':
                          return pullFromEmployees();
+                    case 'Update an Employee Role':
+                        return captureRole();
                 }
 };
 
@@ -83,6 +86,7 @@ async function pullFromRoles (){
 };
 
 async function pullFromEmployees(){
+    updateEmployee();
     try{
         const resultsEmployees = await db.query('SELECT * FROM employee');
         //get data from results
@@ -119,7 +123,14 @@ async function captureRole(){
         type:"input",
         name:"role_title",
         message: "What role do you want to add?" 
-    }]);
+    },
+    {
+        type:"input",
+        name:"role_salary",
+        message:"What is the salary of the role you just added?"
+    }
+
+]);
     await insertRole(answers);
 };
 
@@ -148,23 +159,35 @@ async function captureEmployee(){
             'Ator/Talent',
             'Update an Employee Role',
                  ]  
-    }]);
-    switch(answers.input){
+    },
+    {
+        type:"input",
+        name:"role_salary",
+        message:"What is the salary of the role you just added?"
+    },
+]);
+    switch(answers){
         case 'first_name':
-            return insertEmployee(input);
+            return insertEmployee(answers);
         case 'last_name':
-            return insertEmployee(input);}
+            return insertEmployee(answers);}
     switch(answers.options){
         case 'producer':
         case 'Writer':
         case 'Editor':
         case 'Promoter':
         case 'Assistant Producer':
-        case 'Actor/Talen':
+        case 'Actor/Talent':
             return updateRoles(answers);
-        case 'Update an Employee':
+        case 'Update an Employee Role':
             return captureRole(answers);
     };
+    switch(answers.options){
+        case 'role_salary':
+            return insertRole(answers)
+    };
+    await insertEmployee(answers);
+    await updateRoles(answers);
 };
 
 
@@ -186,11 +209,12 @@ async function insertRole(input){
 };
 
 async function insertEmployee(answers){
-    console.log(input);
+    console.log(answers);
     //use prepared statement
-    const idata = await db.query("INSERT INTO employee SET ?", [input]);
+    const idata = await db.query("INSERT INTO employee SET `first_name` = ?, `last_name` = ?, `options` = ?,`role_salary` = ?", answers.first_name, answers.last_name, answers.options, answers.role_salary);
     console.log(idata);
     console.log("Insert Successful");
+    updateEmployee();
 };
 
 async function updateRoles(answers){
@@ -199,7 +223,7 @@ async function updateRoles(answers){
 
     const roleID = await getRoleId(options);
 
-    const idata = await db.query("UPDATE role SET `first_name` = ?, `last_name`=? WHERE `id`=?" [answers])
+    const idata = await db.query("UPDATE role SET `role_title` = ?, `role_salary`=? WHERE `id`=?", [first_name, last_name, roleID]);
     console.log(idata);
     console.log('Update Successful');
 };
@@ -209,6 +233,18 @@ async function getRoleId(roleTitle){
     return result[0][0].id;
 };
 
+async function updateEmployee(answers){
+    console.log(answers);
+    const {first_name, last_name, options} = answers;
+    const empID = await getEmpId(options);
+    const idata = await db.query("UPDATE employee SET `first_name` = ?, `last_name`=? WHERE `id`=?", [first_name, last_name, empID]);
+    console.log(idata);
+    console.log('Employee Update sucessful!');
+};
+
+async function getEmpId(options){
+    
+}
 
 //start/init functiion. Where the program begins.
 async function init(){
