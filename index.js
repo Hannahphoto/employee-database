@@ -4,6 +4,7 @@ const mysql = require('mysql2/promise');
 
 //db connection file using dotenv
 const startConnection = require('./db/connection');
+const { up } = require('inquirer/lib/utils/readline');
 
 let db = null;
 
@@ -119,7 +120,8 @@ async function captureDept(){
 };
 
 async function captureRole(){
-    const answers = await inquirer.prompt([{
+
+    const input = await inquirer.prompt([{
         type:"input",
         name:"role_title",
         message: "What role do you want to add?" 
@@ -128,10 +130,17 @@ async function captureRole(){
         type:"input",
         name:"role_salary",
         message:"What is the salary of the role you just added?"
+    },
+    {
+        type: "input",
+        name: "department_name",
+        message: "Which department does this role belong to?",
     }
 
 ]);
-    await insertRole(answers);
+    await insertRole(input);
+    await getDepID(input)
+    await updateDepartment();
 };
 
 async function captureEmployee(){
@@ -165,7 +174,8 @@ async function captureEmployee(){
         case 'first_name':
             return insertEmployee(answers);
         case 'last_name':
-            return insertEmployee(answers);}
+            return insertEmployee(answers);
+            }
     switch(answers.options){
         case 'producer':
         case 'Writer':
@@ -180,6 +190,7 @@ async function captureEmployee(){
     // await insertEmployee(answers);
     // await updateRoles(answers);
     await updateEmployee(answers);
+    updateRoles(answers);
 };
 
 
@@ -190,14 +201,17 @@ async function insertDepartment(input){
     const idata = await db.query("INSERT INTO department SET ?", [input]);
     console.log(idata);
     console.log("Insert Successful");
+    updateDepartment(input);
 };
 
+
 async function insertRole(input){
+    // updateRoles();
     console.log(input);
     //use prepared statement
-    const idata = await db.query("INSERT INTO role SET ?", [input]);
+    const idata = await db.query("INSERT INTO role SET, `role_title` = ?, `department_id` = ?, `role_salary`=?", [input.role_title, input.role_salary, department_id]);
     console.log(idata);
-    console.log("Insert Successful");
+    console.log("Role Insert Successful");
     updateRoles();
 };
 
@@ -213,18 +227,19 @@ async function insertEmployee(answers){
 
 async function updateRoles(input){
     console.log(input);
-    const {first_name, last_name, options} = input;
+    const {role_title, role_salary, options} = input;
+   
 
     const roleID = await getRoleId(options);
 
-    const idata = await db.query("UPDATE role SET `role_title` = ?, `role_salary` = ?, `department_id`=?", [input, roleID]);
+    const idata = await db.query("UPDATE role SET `role_title` = ?, `role_salary` = ?, `department_id`=?", [role_title, role_salary, roleID]);
     console.log(idata);
     console.log('Update Successful');
 };
 
 async function getRoleId(roleTitle){
     const result = await db.query("SELECT id FROM role WHERE role_title = ?", [roleTitle]);
-    return result[0][0].id;
+    return result[roleTitle];
 };
 
 
@@ -240,9 +255,31 @@ async function updateEmployee(input){
 
 async function getEmpId(roleTitle){
     const resultEmp = await db.query("SELECT id FROM employee WHERE role_title =?", [roleTitle]);
-    return resultEmp[0][0].id;
+    if(resultEmp[0] && resultEmp[0][0] && resultEmp[0][0].id){
+        return resultEmp[0][0].id;
+    }else {
+        return null;
+    };
 };
 
+//Update department
+async function updateDepartment(input){
+    console.log(input);
+    const {department_name} = input;
+    const depID = await getDepID(department_name);
+    const idata = await db.query("UPDATE department SET `department_name`=?", [department_name,depID]);
+    console.log(idata);
+    console.log('Department update Successful');
+};
+//get department id
+async function getDepID(department_name){
+    const resultDep = await db.query("SELECT id FROM department WHERE department_name = ?", [department_name]);
+    if(resultDep[0] && resultDep[0][0] && resultDep[0][0].id){
+        return resultDep[0][0].id;
+    }else {
+        return null;
+    };
+};
 //start/init functiion. Where the program begins.
 async function init(){
     db = await startConnection(
