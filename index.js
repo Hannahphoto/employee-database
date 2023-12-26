@@ -64,7 +64,7 @@ async function pullFromDepartment (){
     console.error('Error executing SQL query:', error.message);
   };
 
-// menu();
+await menu();
 };
 
 async function pullFromRoles (){
@@ -83,7 +83,7 @@ async function pullFromRoles (){
         console.error('Error executing SQL query:', error.message);
       }
 
-// menu();
+await menu();
 };
 
 async function pullFromEmployees(){
@@ -103,7 +103,7 @@ async function pullFromEmployees(){
         console.error('Error executing SQL query:', error.message);
       }
 
-// menu();
+await menu();
 };
 
 //capture input data
@@ -138,7 +138,7 @@ async function captureRole(){
     },
 ]);
     await insertRole(input);
-    await updateDepartment(input);
+    // await updateDepartment(input);
 };
 
 async function captureEmployee(){
@@ -181,14 +181,12 @@ async function captureEmployee(){
         case 'Promoter':
         case 'Assistant Producer':
         case 'Actor/Talent':
-            return updateRoles(answers);
+            return insertRole(answers);
         case 'Update an Employee Role':
             return captureRole(answers);
     };
-    // await insertEmployee(answers);
+    await insertEmployee(answers);
     // await updateRoles(answers);
-    await updateEmployee(answers);
-    updateRoles(answers);
 };
 
 
@@ -199,7 +197,7 @@ async function insertDepartment(input){
     const idata = await db.query("INSERT INTO department SET ?", [input]);
     console.log(idata);
     console.log("Insert Successful");
-    updateDepartment(input);
+    // updateDepartment(input);
 };
 
 
@@ -207,77 +205,76 @@ async function insertRole(input){
     // updateRoles();
     console.log(input);
     //use prepared statement
-    const idata = await db.query("INSERT INTO role SET, `role_title` = ?, `role_salary`=?", [input.role_title, input.role_salary]);
+    const idata = await db.query("INSERT INTO role SET `role_title` = ?, `role_salary`=?", [input.role_title, input.role_salary]);
     console.log(idata);
     console.log("Role Insert Successful");
-    updateRoles();
 };
 
 async function insertEmployee(answers){
     console.log(answers);
     //use prepared statement
-    const idata = await db.query("INSERT INTO employee SET `first_name` = ?, `last_name` = ?, `options` = ?,`role_title` =?", answers.first_name, answers.last_name, answers.options, answers.role_salary);
+    const idata = await db.query("INSERT INTO employee SET `first_name` = ?, `last_name` = ?, `role_id`=?, `role_title`=?", [answers.first_name, answers.last_name, answers.role_title]);
     console.log(idata);
-    console.log("Insert Successful");
-    updateEmployee();
-    updateRoles();
-};
-
-async function updateRoles(input){
-    console.log(input);
-    const {role_title, role_salary, options} = input;
-   
-
-    const roleID = await getRoleId(options);
-
-    const idata = await db.query("UPDATE role SET `role_title` = ?, `role_salary` = ?, `department_id`=?", [role_title, role_salary, roleID]);
-    console.log(idata);
-    console.log('Update Successful');
-};
-
-async function getRoleId(roleTitle){
-    const result = await db.query("SELECT id FROM role WHERE role_title = ?", [roleTitle]);
-    return result[roleTitle];
-};
-
-
-async function updateEmployee(input){
-    console.log(input);
-    const {first_name, last_name, options} = input;
-    const empID = await getEmpId(options);
-    const idata = await db.query("UPDATE employee SET `first_name` = ?, `last_name`=?", [first_name,last_name, empID]);
-    console.log(idata);
-    console.log('Employee Update sucessful!');
+    console.log("Employee insert Successful");
+    // updateEmployee();
     // updateRoles();
 };
 
-async function getEmpId(roleTitle){
-    const resultEmp = await db.query("SELECT id FROM employee WHERE role_title =?", [roleTitle]);
-    if(resultEmp[0] && resultEmp[0][0] && resultEmp[0][0].id){
-        return resultEmp[0][0].id;
-    }else {
-        return null;
-    };
-};
+// async function updateRoles(input){
+//     console.log(input);
+//     const {role_title, role_salary, options} = input;
+   
 
-//Update department
-async function updateDepartment(input){
-    console.log(input);
-    const {department_name} = input;
-    const depID = await getDepID(department_name);
-    const idata = await db.query("UPDATE department SET `department_name`=?", [department_name,depID]);
-    console.log(idata);
-    console.log('Department update Successful');
-};
-//get department id
-async function getDepID(department_name){
-    const resultDep = await db.query("SELECT id FROM department WHERE department_name = ?", [department_name]);
-    if(resultDep[0] && resultDep[0][0] && resultDep[0][0].id){
-        return resultDep[0][0].id;
-    }else {
-        return null;
-    };
-};
+//     const roleID = await getRoleId(options);
+//     // const {department_name} = getDepId(input);
+//     const idata = await db.query("UPDATE role SET `role_title` = ?, `role_salary` = ?, `department_id`=?", [role_title, role_salary, roleID]);
+//     console.log(idata);
+//     console.log('Role update Successful');
+// };
+
+// async function getRoleId(roleTitle){
+//     const result = await db.query("SELECT id FROM role WHERE role_title = ?", [roleTitle]);
+//     return result[roleTitle];
+// };
+
+
+// async function updateEmployee(input){
+//     console.log(input);
+//     const {first_name, last_name, options} = input;
+//     const empID = await getEmpId(options);
+//     const idata = await db.query("UPDATE employee SET `first_name` = ?, `last_name`=?", [first_name,last_name, empID]);
+//     console.log(idata);
+//     console.log('Employee Update sucessful!');
+//     // updateRoles();
+// };
+
+// async function getEmpId(roleTitle){
+//     const resultEmp = await db.query("SELECT id FROM employee WHERE role_title =?", [roleTitle]);
+//     if(resultEmp[0] && resultEmp[0][0] && resultEmp[0][0].id){
+//         return resultEmp[0][0].id;
+//     }else {
+//         return null;
+//     };
+// };
+
+// //Update department
+// async function updateDepartment(input){
+//     console.log(input);
+//     const {department_name} = input;
+//     const depID = await getDepID(department_name);
+//     const idata = await db.query("UPDATE department SET `department_name`=?", [department_name,depID]);
+//     console.log(idata);
+//     console.log('Department update Successful');
+// };
+// //get department id
+// async function getDepID(input){
+//     input = await db.query("SELECT id FROM department WHERE department_name = ?", [department_name]);
+//     if(resultDep[0] && resultDep[0][0] && resultDep[0][0].id){
+//         return resultDep[0][0].id;
+//     }else {
+//         return null;
+//     };
+// };
 //start/init functiion. Where the program begins.
 async function init(){
     db = await startConnection(
