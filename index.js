@@ -156,35 +156,45 @@ async function captureEmployee(){
     {
         type:"list",
         name: "options",
-        message: "what role will this employee have?",
+        message: "Which department will this employee be in?",
+        choices: [
+            'Pre-Production',
+            'Production',
+            'Post-Production',
+            'Marketing',
+                 ]  
+    },
+    {
+        type:"list",
+        name: "options",
+        message: "What role will this employee have?",
         choices: [
             'Producer',
             'Writer',
             'Editor',
             'Promoter',
-            'Assistant Producer',
-            'Ator/Talent',
-            'Update an Employee Role',
+            'Assistant Producter',
+            'Actor/Talent',
                  ]  
     },
 ]);
-    switch(answers){
-        case 'first_name':
-            return insertEmployee(answers);
-        case 'last_name':
-            return insertEmployee(answers);
-            }
-    switch(answers.options){
-        case 'producer':
-        case 'Writer':
-        case 'Editor':
-        case 'Promoter':
-        case 'Assistant Producer':
-        case 'Actor/Talent':
-            return insertRole(answers);
-        case 'Update an Employee Role':
-            return captureRole(answers);
-    };
+    // switch(answers){
+    //     case 'first_name':
+    //         return insertEmployee(answers);
+    //     case 'last_name':
+    //         return insertEmployee(answers);
+    //         }
+    // switch(answers.options){
+    //     case 'producer':
+    //     case 'Writer':
+    //     case 'Editor':
+    //     case 'Promoter':
+    //     case 'Assistant Producer':
+    //     case 'Actor/Talent':
+    //         return insertRole(answers);
+    //     case 'Update an Employee Role':
+    //         return captureRole(answers);
+    // };
     await insertEmployee(answers);
     // await updateRoles(answers);
 };
@@ -212,12 +222,31 @@ async function insertRole(input){
 
 async function insertEmployee(answers){
     console.log(answers);
+    // fetch department_id based on department name
+    const [department] = await db.query('SELECT id FROM department WHERE department_name =?',[answers.options]);
+
+    if(!department || !department[0] || !department[0].id ){
+        console.error('Error: Department not found.');
+        return;
+    }
+
+    const department_id = department[0].id;
+
+    //fetch role_title based on role_title
+    const [role] = await db.query('SELECT id FROM role WHERE role_title =?',[answers.options]);
+
+    if(!role || !role[0] || !role[0].id ){
+        console.error('Error: Role not found.');
+        return;
+    }
+
+    const role_title = role[0].id;
+
     //use prepared statement
-    const idata = await db.query("INSERT INTO employee SET `first_name` = ?, `last_name` = ?, `role_id`=?, `role_title`=?", [answers.first_name, answers.last_name, answers.role_title]);
+    const idata = await db.query("INSERT INTO employee SET `first_name` = ?, `last_name` = ?, `department_id` = ?", [answers.first_name, answers.last_name, role_title, department_id,]);
     console.log(idata);
     console.log("Employee insert Successful");
-    // updateEmployee();
-    // updateRoles();
+    await menu();
 };
 
 // async function updateRoles(input){

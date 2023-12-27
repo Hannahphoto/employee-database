@@ -1,4 +1,4 @@
-INSERT INTO department (department_name)
+nINSERT INTO department (department_name)
 VALUES  ("Pre-Production"),
         ("Production"),
         ("Post-Production"),
