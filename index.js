@@ -178,25 +178,10 @@ async function captureEmployee(){
                  ]  
     },
 ]);
-    // switch(answers){
-    //     case 'first_name':
-    //         return insertEmployee(answers);
-    //     case 'last_name':
-    //         return insertEmployee(answers);
-    //         }
-    // switch(answers.options){
-    //     case 'producer':
-    //     case 'Writer':
-    //     case 'Editor':
-    //     case 'Promoter':
-    //     case 'Assistant Producer':
-    //     case 'Actor/Talent':
-    //         return insertRole(answers);
-    //     case 'Update an Employee Role':
-    //         return captureRole(answers);
-    // };
-    await insertEmployee(answers);
-    // await updateRoles(answers);
+    
+    await insertDepartment({department_name: answers.department});
+    // await insertRole({role_title: answers.role});
+    await insertEmployee({first_name: answers.first_name, last_name: answers.last_name, role_title: answers.role, department_name: answers.department});
 };
 
 
@@ -233,76 +218,22 @@ async function insertEmployee(answers){
     const department_id = department[0].id;
 
     //fetch role_title based on role_title
-    const [role] = await db.query('SELECT id FROM role WHERE role_title =?',[answers.options]);
+    const [role] = await db.query('SELECT id FROM role WHERE role_title =?',[answers.role_title]);
 
     if(!role || !role[0] || !role[0].id ){
         console.error('Error: Role not found.');
         return;
     }
 
-    const role_title = role[0].id;
+    const role_id = role[0].id;
 
     //use prepared statement
-    const idata = await db.query("INSERT INTO employee SET `first_name` = ?, `last_name` = ?, `department_id` = ?", [answers.first_name, answers.last_name, role_title, department_id,]);
+    const idata = await db.query("INSERT INTO employee SET `first_name` = ?, `last_name` = ?, `department_id` = ?", [answers.first_name, answers.last_name, role_id, department_id,]);
     console.log(idata);
     console.log("Employee insert Successful");
     await menu();
 };
 
-// async function updateRoles(input){
-//     console.log(input);
-//     const {role_title, role_salary, options} = input;
-   
-
-//     const roleID = await getRoleId(options);
-//     // const {department_name} = getDepId(input);
-//     const idata = await db.query("UPDATE role SET `role_title` = ?, `role_salary` = ?, `department_id`=?", [role_title, role_salary, roleID]);
-//     console.log(idata);
-//     console.log('Role update Successful');
-// };
-
-// async function getRoleId(roleTitle){
-//     const result = await db.query("SELECT id FROM role WHERE role_title = ?", [roleTitle]);
-//     return result[roleTitle];
-// };
-
-
-// async function updateEmployee(input){
-//     console.log(input);
-//     const {first_name, last_name, options} = input;
-//     const empID = await getEmpId(options);
-//     const idata = await db.query("UPDATE employee SET `first_name` = ?, `last_name`=?", [first_name,last_name, empID]);
-//     console.log(idata);
-//     console.log('Employee Update sucessful!');
-//     // updateRoles();
-// };
-
-// async function getEmpId(roleTitle){
-//     const resultEmp = await db.query("SELECT id FROM employee WHERE role_title =?", [roleTitle]);
-//     if(resultEmp[0] && resultEmp[0][0] && resultEmp[0][0].id){
-//         return resultEmp[0][0].id;
-//     }else {
-//         return null;
-//     };
-// };
-
-// //Update department
-// async function updateDepartment(input){
-//     console.log(input);
-//     const {department_name} = input;
-//     const depID = await getDepID(department_name);
-//     const idata = await db.query("UPDATE department SET `department_name`=?", [department_name,depID]);
-//     console.log(idata);
-//     console.log('Department update Successful');
-// };
-// //get department id
-// async function getDepID(input){
-//     input = await db.query("SELECT id FROM department WHERE department_name = ?", [department_name]);
-//     if(resultDep[0] && resultDep[0][0] && resultDep[0][0].id){
-//         return resultDep[0][0].id;
-//     }else {
-//         return null;
-//     };
 // };
 //start/init functiion. Where the program begins.
 async function init(){
