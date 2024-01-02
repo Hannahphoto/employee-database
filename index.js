@@ -155,7 +155,7 @@ async function captureEmployee(){
     },
     {
         type:"list",
-        name: "options",
+        name: "department",
         message: "Which department will this employee be in?",
         choices: [
             'Pre-Production',
@@ -166,7 +166,7 @@ async function captureEmployee(){
     },
     {
         type:"list",
-        name: "options",
+        name: "role",
         message: "What role will this employee have?",
         choices: [
             'Producer',
@@ -179,9 +179,9 @@ async function captureEmployee(){
     },
 ]);
     
-    await insertDepartment({department_name: answers.department});
+    // await insertDepartment({department_name: answers.department});
     // await insertRole({role_title: answers.role});
-    await insertEmployee({first_name: answers.first_name, last_name: answers.last_name, role_title: answers.role, department_name: answers.department});
+    await insertEmployee({first_name: answers.first_name, last_name: answers.last_name, role: answers.role, department: answers.department});
 };
 
 
@@ -208,7 +208,7 @@ async function insertRole(input){
 async function insertEmployee(answers){
     console.log(answers);
     // fetch department_id based on department name
-    const [department] = await db.query('SELECT id FROM department WHERE department_name =?',[answers.options]);
+    const [department] = await db.query('SELECT id FROM department WHERE department_name =?',[answers.department]);
 
     if(!department || !department[0] || !department[0].id ){
         console.error('Error: Department not found.');
@@ -218,7 +218,7 @@ async function insertEmployee(answers){
     const department_id = department[0].id;
 
     //fetch role_title based on role_title
-    const [role] = await db.query('SELECT id FROM role WHERE role_title =?',[answers.role_title]);
+    const [role] = await db.query('SELECT id FROM role WHERE role_title =?',[answers.role]);
 
     if(!role || !role[0] || !role[0].id ){
         console.error('Error: Role not found.');
@@ -228,7 +228,7 @@ async function insertEmployee(answers){
     const role_id = role[0].id;
 
     //use prepared statement
-    const idata = await db.query("INSERT INTO employee SET `first_name` = ?, `last_name` = ?, `department_id` = ?", [answers.first_name, answers.last_name, role_id, department_id,]);
+    const idata = await db.query("INSERT INTO employee SET `first_name` = ?, `last_name` = ?, `department_id` = ?", [answers.first_name, answers.last_name,role_id, answers.role, department_id]);
     console.log(idata);
     console.log("Employee insert Successful");
     await menu();
