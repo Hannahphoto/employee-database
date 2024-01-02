@@ -1,5 +1,5 @@
 # employee-database
-A Content Management System to manage a companies employee database.
+A Content Management System to manage a companies employee database. Built from the back end.
 
 ## User Story
 
