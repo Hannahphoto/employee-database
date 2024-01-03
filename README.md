@@ -28,3 +28,15 @@ THEN I am prompted to enter the employee’s first name, last name, role, and ma
 WHEN I choose to update an employee role
 THEN I am prompted to select an employee to update and their new role and this information is updated in the database 
 
+## Notes
+Ran into a few issues where my captureDepartment() and captctureEmpployee() would not work unless the fucntions were inside the init(). I attended office hours our first day back from break and Athony helped me discover that I needed a .then in my Inquier prompt. Everything now works smoothly. 
+
+## Git Hub
+https://github.com/Hannahphoto/employee-database
+
+## Screenshot
+
+
+<div align="center">
+    <img src="./image/table_example.png" href = "Screenshot of the Employee Database Table." />
+    </div>
