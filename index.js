@@ -3,14 +3,15 @@ const { table } = require('table');
 const mysql = require('mysql2/promise');
 
 //db connection file using dotenv
+const readline = require('inquirer/lib/utils/readline')
 const startConnection = require('./db/connection');
-const { up } = require('inquirer/lib/utils/readline');
+
 
 let db = null;
 
 
 async function menu() {
-    const answers = await inquirer.prompt(
+    const userAnswers = inquirer.prompt(
         [
             {
                 type: 'list',
@@ -25,31 +26,44 @@ async function menu() {
                     'Add an Employee',
                     'Update an Employee Role'
                 ]
-            }]);
+            }])
 
-    switch (answers.options) {
-        case 'Add a department':
-            return captureDept();
-        case 'Add a role':
-            return captureRole();
-        case 'Add an Employee':
-            return captureEmployee();
+    .then((answers) => {
+        switch (answers.options){
         case 'View All Departments':
-            return await pullFromDepartment();
+            pullFromDepartment();
+            break;
         case 'View all Roles':
-            return pullFromRoles();
+            pullFromRoles();
+            break;         
         case 'View all Employees':
-            return pullFromEmployees();
+            pullFromEmployees();
+            break;
+        case 'Add a department':
+            captureDept();
+            break;
+        case 'Add a role':
+            captureRole();
+            break;
+        case 'Add an Employee':
+            captureEmployee();
+            break;
         case 'Update an Employee Role':
-            return updateEmployeeRole();
-    }
+            updateEmployeeRole();
+            break;
+    }})
+    // .then(()=>{
+    //     menu();
+    // })
+    .catch((error)=> {
+        console.error('Error in menu:', error.message);
+    });
 };
 
 //exit function
 
-
+ //looking at the schema file
 async function pullFromDepartment() {
-    //looking at the schema file
     try {
         const resultsDept = await db.query('SELECT * FROM department');
         //get data from results
@@ -65,7 +79,7 @@ async function pullFromDepartment() {
         console.error('Error executing SQL query:', error.message);
     };
 
-    // await menu();
+    await menu();
 };
 
 async function pullFromRoles() {
@@ -88,7 +102,7 @@ async function pullFromRoles() {
 };
 
 async function pullFromEmployees() {
-    updateEmployeeRole();
+    // updateEmployeeRole();
     try {
         const resultsEmployees = await db.query('SELECT employee.id, employee.first_name, employee.last_name, role.role_title FROM employee LEFT JOIN role ON employee.role_id = role.id');
         //get data from results
@@ -118,6 +132,8 @@ async function captureDept() {
     ]);
     console.log(answers)
     await insertDepartment(answers);
+
+    await menu();
 };
 
 async function captureRole() {
@@ -140,6 +156,8 @@ async function captureRole() {
     ]);
     await insertRole(input);
     // await updateDepartment(input);
+
+    await menu();
 };
 
 async function captureEmployee() {
@@ -183,6 +201,8 @@ async function captureEmployee() {
     // await insertDepartment({department_name: answers.department});
     // await insertRole({role_title: answers.role});
     await insertEmployee({ first_name: answers.first_name, last_name: answers.last_name, role: answers.role, department: answers.department });
+
+    await menu();
 };
 
 
@@ -194,6 +214,7 @@ async function insertDepartment(input) {
     console.log(idata);
     console.log("Insert Successful");
     // updateDepartment(input);
+    // await menu();
 };
 
 
@@ -204,6 +225,8 @@ async function insertRole(input) {
     const idata = await db.query("INSERT INTO role SET `role_title` = ?, `role_salary`=?", [input.role_title, input.role_salary]);
     console.log(idata);
     console.log("Role Insert Successful");
+
+    // await menu();
 };
 
 async function insertEmployee(answers) {
@@ -232,7 +255,8 @@ async function insertEmployee(answers) {
     const idata = await db.query("INSERT INTO employee SET `first_name` = ?, `last_name` = ?, `department_id` = ?", [answers.first_name, answers.last_name, role_id, answers.role, department_id]);
     console.log(idata);
     console.log("Employee insert Successful");
-    await menu();
+
+    // await menu();
 };
 
 async function updateEmployeeRole() {
@@ -285,9 +309,9 @@ async function init() {
 
 
     await menu();
-    await pullFromDepartment();
+    // await pullFromDepartment();
     // await pullFromRoles();
-    await pullFromEmployees();
+    // await pullFromEmployees();
 
 };
 
