@@ -11,7 +11,7 @@ let db = null;
 
 
 async function menu() {
-    const userAnswers = inquirer.prompt(
+    const userAnswers = await inquirer.prompt(
         [
             {
                 type: 'list',
@@ -28,9 +28,9 @@ async function menu() {
                 ]
             }])
 
-    .then((answers) => {
+    .then(async(answers) => {
         switch (answers.options){
-        case 'View All Departments':
+        case 'View all Departments':
             pullFromDepartment();
             break;
         case 'View all Roles':
@@ -52,9 +52,6 @@ async function menu() {
             updateEmployeeRole();
             break;
     }})
-    // .then(()=>{
-    //     menu();
-    // })
     .catch((error)=> {
         console.error('Error in menu:', error.message);
     });
@@ -69,7 +66,7 @@ async function pullFromDepartment() {
         //get data from results
         console.log(resultsDept[0]);
         //table module 
-        // //table columns names
+        //table columns names
         const deptArr = resultsDept[0].map(row => Object.values(row));
         //add column names 
         deptArr.unshift(["id", "department_name"]);
@@ -155,7 +152,6 @@ async function captureRole() {
     },
     ]);
     await insertRole(input);
-    // await updateDepartment(input);
 
     await menu();
 };
@@ -198,8 +194,7 @@ async function captureEmployee() {
     },
     ]);
 
-    // await insertDepartment({department_name: answers.department});
-    // await insertRole({role_title: answers.role});
+
     await insertEmployee({ first_name: answers.first_name, last_name: answers.last_name, role: answers.role, department: answers.department });
 
     await menu();
@@ -213,8 +208,6 @@ async function insertDepartment(input) {
     const idata = await db.query("INSERT INTO department SET ?", [input]);
     console.log(idata);
     console.log("Insert Successful");
-    // updateDepartment(input);
-    // await menu();
 };
 
 
@@ -225,8 +218,6 @@ async function insertRole(input) {
     const idata = await db.query("INSERT INTO role SET `role_title` = ?, `role_salary`=?", [input.role_title, input.role_salary]);
     console.log(idata);
     console.log("Role Insert Successful");
-
-    // await menu();
 };
 
 async function insertEmployee(answers) {
@@ -309,10 +300,6 @@ async function init() {
 
 
     await menu();
-    // await pullFromDepartment();
-    // await pullFromRoles();
-    // await pullFromEmployees();
-
 };
 
 init();
