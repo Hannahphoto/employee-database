@@ -34,6 +34,10 @@ Ran into a few issues where my captureDepartment() and captctureEmpployee() woul
 ## Git Hub
 https://github.com/Hannahphoto/employee-database
 
+## Walkthrough Video
+
+https://youtu.be/jExjpk7NWcQ
+
 ## Screenshot
 
 
